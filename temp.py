@@ -20,7 +20,7 @@ def get_info():
     info_pvc = Popen(info_pvc_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     info_pvc_list = info_pvc.stdout.read().split()
     count=3
-    info_pvc_list = [ info_pvc_list[i:i+count] for i in range(0,len(info_pre_list),count) ]
+    info_pvc_list = [ info_pvc_list[i:i+count] for i in range(0,len(info_pvc_list),count) ]
         
     return info_pvc_list
 

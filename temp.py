@@ -6,7 +6,6 @@ import subprocess
 import timeit
 import json
 from datetime import datetime
-from threading import Thread
 
 def human_bytes(B):
     """Return human readable file unit like KB, MB, GB string by Byte

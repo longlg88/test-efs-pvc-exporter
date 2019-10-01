@@ -4,11 +4,13 @@ import sys
 from subprocess import Popen, PIPE, STDOUT
 import subprocess
 import timeit
+import time
 import json
 from datetime import datetime
 from threading import Thread
 
-start = timeit.default_timer() # Record processing time
+# start = timeit.default_timer() # Record processing time
+start = time.time()
 
 def human_bytes(B):
     """Return human readable file unit like KB, MB, GB string by Byte
@@ -217,4 +219,5 @@ if __name__ == "__main__":
     # print(json.dumps(json_info))
     # print(json.dumps(all_json_info))
 
-print('\nlaptime = ' % (timeit.default_timer() - start))
+# print('\nlaptime = ' % (timeit.default_timer() - start))
+print("\nlaptime = " % (time.time() - start))

@@ -208,7 +208,7 @@ if __name__ == "__main__":
     # all_json_info = all_efs_collect_info()
     th_json_info=Thread(target=match_collect_info, args=())
     th_json_info.start()
-    th_all_json_info=Thread(target=all_efs_collect_info, args())
+    th_all_json_info=Thread(target=all_efs_collect_info, args=())
     th_all_json_info.start()
 
     # print(json.dumps(json_info))

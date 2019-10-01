@@ -118,8 +118,8 @@ def all_efs_collect_info():
 if __name__ == "__main__":
     datetime_now = datetime.now() # Define current time
     start = timeit.default_timer() # Record processing time
-    #json_info = {"timestamp":str(datetime_now), "metadata":{"matching":match_collect_info(), "all":all_efs_collect_info()}}
-    json_info = {"timestamp":str(datetime_now), "metadata":{"matching":match_collect_info()}}
+    json_info = {"timestamp":str(datetime_now), "metadata":{"matching":match_collect_info(), "all":all_efs_collect_info()}}
+    
     print(json.dumps(json_info))
 
     stop = timeit.default_timer()

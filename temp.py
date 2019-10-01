@@ -116,6 +116,7 @@ def all_efs_collect_info():
     datetime_now = datetime.now()
 
     for pv_name in pv_list:
+        print(pv_name)
         all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+pv_name.replace('\n','')+ " | awk '{print $1}'"
         all_size_res = Popen(all_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         all_size = all_size_res.stdout.readlines()[1:]

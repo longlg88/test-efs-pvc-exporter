@@ -43,6 +43,7 @@ def get_pvc_info():
     info_pvc_list = info_pvc.stdout.read().decode('utf-8').split()
     count=3
     info_pvc_list = [ info_pvc_list[i:i+count] for i in range(0,len(info_pvc_list),count) ]
+    print(info_pvc_list)
     return info_pvc_list
 
 def get_efs_provisioner():

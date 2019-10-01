@@ -43,14 +43,12 @@ def get_pvc_info():
     info_pvc_list = info_pvc.stdout.read().decode('utf-8').split()
     count=3
     info_pvc_list = [ info_pvc_list[i:i+count] for i in range(0,len(info_pvc_list),count) ]
-    print(info_pvc_list)
     return info_pvc_list
 
 def get_efs_provisioner():
     efs_provisioner_cmd = "kubectl get pod -n kube-system | grep efs | awk '{print $1}'"
     efs_provisioner_res = Popen(efs_provisioner_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     efs_provisioner_id = efs_provisioner_res.stdout.read().decode('utf-8').replace('\n','')
-    print(efs_provisioner_id)
     return efs_provisioner_id
 
 def get_pv_name():
@@ -60,7 +58,6 @@ def get_pv_name():
     pv_id_cmd = "kubectl exec -it "+get_efs_provisioner()+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
     pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     pv_id_list = pv_id_res.stdout.readlines()[1:]
-    print(pv_id_list)
     return pv_id_list
 
 def match_collect_info():
@@ -122,7 +119,8 @@ def all_efs_collect_info():
 if __name__ == "__main__":
     datetime_now = datetime.now() # Define current time
     start = timeit.default_timer() # Record processing time
-    json_info = {"timestamp":str(datetime_now), "metadata":{"matching":match_collect_info(), "all":all_efs_collect_info()}}
+    #json_info = {"timestamp":str(datetime_now), "metadata":{"matching":match_collect_info(), "all":all_efs_collect_info()}}
+    json_info = {"timestamp":str(datetime_now), "metadata":{"matching":match_collect_info()}}
     print(json.dumps(json_info))
 
     stop = timeit.default_timer()

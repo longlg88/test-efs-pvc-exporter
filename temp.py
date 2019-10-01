@@ -89,7 +89,7 @@ def match_collect_info():
         m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         m_size = m_size_res.stdout.readlines()[1:]
         print(m_size)
-        sum_size = human_bytes(int(m_size.replace('\n',''))*1024)
+        sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)
         size_pvc.append(sum_size)
     print(size_pvc)
 

@@ -8,8 +8,6 @@ import json
 from datetime import datetime
 from threading import Thread
 
-start = timeit.default_timer() # Record processing time
-
 def human_bytes(B):
     """Return human readable file unit like KB, MB, GB string by Byte
     Args:
@@ -130,6 +128,7 @@ def all_efs_collect_info():
     return json_info
 
 if __name__ == "__main__":
+    start = timeit.default_timer() # Record processing time
     json_info = match_collect_info()
     all_json_info = all_efs_collect_info()
     #th_json_info=Thread(target=match_collect_info, args=())
@@ -139,5 +138,7 @@ if __name__ == "__main__":
 
     print(json.dumps(json_info))
     print(json.dumps(all_json_info))
+    stop = timeit.default_timer()
+    laptime=stop-start
 
-    print('\nlaptime = ' % (timeit.default_timer() - start))
+    print('\nlaptime = '+str(laptime))

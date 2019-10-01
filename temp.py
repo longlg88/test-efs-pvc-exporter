@@ -103,9 +103,9 @@ def match_collect_info():
                 find_pod_name_res = Popen(find_pod_name_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 find_pod_name = find_pod_name_res.stdout.read().replace('\n','')
                 
-                print("name is = "+find_pod_name+"nn")
+                print(type(find_pod_name))
 
-                if find_pod_name != " ":
+                if find_pod_name != "":
                     metric_info = {"namespace":i_group[0], "name":find_pod_name.replace('\n',''), "size":str(sum_size), "pvc":pv_name}
                     metric_list.append(metric_info)
     

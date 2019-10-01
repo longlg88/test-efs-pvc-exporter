@@ -101,10 +101,11 @@ def match_collect_info():
                 # Find pod name for using claim name
                 find_pod_name_cmd = "kubectl get pod -n "+ i_group[0] +" | grep "+ i_group[1] + " | awk '{print $1}'"
                 find_pod_name_res = Popen(find_pod_name_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                find_pod_name = find_pod_name_res.stdout.read()
+                find_pod_name = find_pod_name_res.stdout.read().replace('\n','')
+                
                 print("name is = "+find_pod_name+"nn")
 
-                if find_pod_name == "\n":
+                if find_pod_name == " ":
                     metric_info = {"namespace":i_group[0], "name":find_pod_name.replace('\n',''), "size":str(sum_size), "pvc":pv_name}
                     metric_list.append(metric_info)
     

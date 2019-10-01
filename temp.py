@@ -40,7 +40,7 @@ def get_pv_name():
 
     pv_id_cmd = "kubectl exec -it "+efs_provisioner_id+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
     pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    pv_id_list = pv_id_res.stdout.readlines()
+    pv_id_list = pv_id_res.stdout.readlines()[1:]
 
     return pv_id_list
 
@@ -48,9 +48,9 @@ def get_pv_name():
 def test_collect_info():
     info_list=get_pvc_info()
     pv_list=get_pv_name()
-
-    print(pv_list)
-    #for i in info_list:
+    for i_group in info_list:
+        for g_name in pv_list:
+            print(i_group[1]+i_group[2])
 
 
 def collect_info():

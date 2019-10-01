@@ -101,7 +101,7 @@ def all_efs_collect_info():
     size_pvc = []
     metric_list = []
 
-    for pv_name.decode('utf-8').replace('\n','') in pv_list:
+    for pv_name in pv_list:
         all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+ pv_name.decode('utf-8').replace('\n','') + " | awk '{print $1}'"
         all_size_res = Popen(all_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         all_size = all_size_res.stdout.readlines()[1:]

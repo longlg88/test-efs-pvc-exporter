@@ -7,8 +7,31 @@ import timeit
 import json
 from datetime import datetime
 
+def human_bytes(B):
+    """Return human readable file unit like KB, MB, GB string by Byte
+    Args:
+        B : input byte values
+    Returns:
+        KB / MB / GB
+    """
+    B = float(B)
+    KB = float(1024)
+    MB = float(KB ** 2) # 1,048,576
+    GB = float(KB ** 3) # 1,073,741,824
+    TB = float(KB ** 4) # 1,099,511,627,776
+
+    if B < KB:
+        return '{0} {1}'.format(B,'Bytes' if 0 == B > 1 else 'Byte')
+    elif KB <= B < MB:
+        return '{0:.2f} KB'.format(B/KB)
+    elif MB <= B < GB:
+        return '{0:.2f} MB'.format(B/MB)
+    elif GB <= B < TB:
+        return '{0:.2f} GB'.format(B/GB)
+
 def get_pvc_info():
     """Return namespace, pod name, volumeName for filtering PVC in kubernetes cluster
+    kubectl get pvc --all-namespaces -o json | jq -r '.items[] | select( ( .spec.storageClassName | contains("efs") ) and ( .status.phase | contains("Bound") ) )' | jq -r '.metadata.namespace, .metadata.name, .spec.volumeName'
     Filter condition
         - Is it Bound?
         - Is it StorageClass efs?
@@ -24,6 +47,12 @@ def get_pvc_info():
         
     return info_pvc_list
 
+def get_efs_provisioner():
+    efs_provisioner_cmd = "kubectl get pod -n kube-system | grep efs | awk '{print $1}'"
+    efs_provisioner_res = Popen(efs_provisioner_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    efs_provisioner_id = efs_provisioner_res.stdout.read().replace('\n','')
+    return efs_provisioner_id
+
 def get_pv_name():
     """Return pv name in kubernetes cluster
     efs_provisioner_id = kubectl get pod -n kube-system | grep efs | awk '{print $1}'
@@ -34,26 +63,40 @@ def get_pv_name():
 
     pv_id_list = []
     """
-    efs_provisioner_cmd = "kubectl get pod -n kube-system | grep efs | awk '{print $1}'"
-    efs_provisioner_res = Popen(efs_provisioner_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    efs_provisioner_id = efs_provisioner_res.stdout.read().replace('\n','')
+    
 
-    pv_id_cmd = "kubectl exec -it "+efs_provisioner_id+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
+    pv_id_cmd = "kubectl exec -it "+get_efs_provisioner()+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
     pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     pv_id_list = pv_id_res.stdout.readlines()[1:]
 
     return pv_id_list
 
-
-def test_collect_info():
+# m_size_cmd = "kubectl exec -it " + efs_provisioner_name + " -n kube-system -- du -ks /persistentvolumes/" + pvc_names[val] + "-" + pvc_ids[val] + "/" + _file + " | awk '{print $1}'"
+def match_collect_info():
+    """Return volume size matching pv id and efs directory's name which is exactly same.
+    """
     info_list=get_pvc_info()
     pv_list=get_pv_name()
+    res_pv_list=[]
+    size_pvc=[]
     for g_name in pv_list:
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]
             if g_name.replace('\n','') == i_name:
-                print(g_name)
+                res_pv_list.append(g_name)
 
+    for pv in res_pv_list:
+        m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv + " | awk '{print $1}'"
+        m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+        m_size = m_size_res.stdout.read()
+        sum_size = human_bytes(m_size*1024)
+        size_pvc.append(sum_size)
+    print(size_pvc)
+
+def all_efs_collect_info():
+    """Return all efs directory volumes size
+    """
+    return 0
 
 def collect_info():
 

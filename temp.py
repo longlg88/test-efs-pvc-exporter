@@ -39,7 +39,7 @@ def get_pvc_info():
 
     info_pvc_cmd = "kubectl get pvc --all-namespaces -o json | jq -r '.items[] | select( ( .spec.storageClassName | contains(" + '"' + "efs" + '"' + ") ) and ( .status.phase | contains(" + '"' + "Bound" + '"' + ") ) )' | jq -r '.metadata.namespace, .metadata.name, .spec.volumeName'"
     info_pvc = Popen(info_pvc_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    info_pvc_list = info_pvc.stdout.read().split()
+    info_pvc_list = info_pvc.stdout.read().decode('utf-8').split()
     count=3
     info_pvc_list = [ info_pvc_list[i:i+count] for i in range(0,len(info_pvc_list),count) ]
         
@@ -48,7 +48,7 @@ def get_pvc_info():
 def get_efs_provisioner():
     efs_provisioner_cmd = "kubectl get pod -n kube-system | grep efs | awk '{print $1}'"
     efs_provisioner_res = Popen(efs_provisioner_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    efs_provisioner_id = efs_provisioner_res.stdout.read().replace('\n','')
+    efs_provisioner_id = efs_provisioner_res.stdout.read().decode('utf-8').replace('\n','')
     return efs_provisioner_id
 
 def get_pv_name():
@@ -57,7 +57,7 @@ def get_pv_name():
     
     pv_id_cmd = "kubectl exec -it "+get_efs_provisioner()+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
     pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    pv_id_list = pv_id_res.stdout.readlines()[1:]
+    pv_id_list = pv_id_res.stdout.readlines().decode('utf-8')[1:]
 
     return pv_id_list
 
@@ -78,14 +78,14 @@ def match_collect_info():
                 # Calculate volume size
                 m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv_name.replace('\n','') + " | awk '{print $1}'"
                 m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                m_size = m_size_res.stdout.readlines()[1:]
+                m_size = m_size_res.stdout.readlines().decode('utf-8')[1:]
                 sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)
                 size_pvc.append(sum_size)
 
                 # Find pod name for using claim name
                 find_pod_name_cmd = "kubectl get pod -n "+ i_group[0] +" | grep "+ i_group[1] + " | awk '{print $1}'"
                 find_pod_name_res = Popen(find_pod_name_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                find_pod_name = find_pod_name_res.stdout.read().replace('\n','')
+                find_pod_name = find_pod_name_res.stdout.read().decode('utf-8').replace('\n','')
                 
                 if find_pod_name and find_pod_name != "No resources found.":
                     metric_info = {"namespace":i_group[0], "name":find_pod_name, "size":str(sum_size), "pvc":pv_name}
@@ -106,7 +106,7 @@ def all_efs_collect_info():
     for pv_name in pv_list:
         all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+pv_name.replace('\n','')+ " | awk '{print $1}'"
         all_size_res = Popen(all_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-        all_size = all_size_res.stdout.readlines()[1:]
+        all_size = all_size_res.stdout.readlines().decode('utf-8')[1:]
         all_sum_size = human_bytes(int(all_size[0].replace('\n',''))*1024)
         size_pvc.append(all_sum_size)
 

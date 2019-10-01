@@ -89,6 +89,7 @@ def match_collect_info():
         m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv + " | awk '{print $1}' | sed '1d'"
         m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         m_size = m_size_res.stdout.read()
+        print(m_size)
         sum_size = human_bytes(m_size*1024)
         size_pvc.append(sum_size)
     print(size_pvc)

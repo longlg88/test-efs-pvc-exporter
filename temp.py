@@ -60,7 +60,9 @@ def get_pv_name():
     pv_id_cmd = "kubectl exec -it "+get_efs_provisioner()+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
     pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     pv_id_list = pv_id_res.stdout.readlines()[1:]
-    pv_id_list
+    for x in pv_id_list:
+        x.decode('ascii')
+        pv_id_list.append(x)
     print(pv_id_list)
 
     return pv_id_list

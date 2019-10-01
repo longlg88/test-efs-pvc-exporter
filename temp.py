@@ -48,9 +48,12 @@ def get_pv_name():
 def test_collect_info():
     info_list=get_pvc_info()
     pv_list=get_pv_name()
-    for i_group in info_list:
-        for g_name in pv_list:
-            print(i_group[1]+i_group[2])
+    for g_name in pv_list:
+        for i_group in info_list:
+            if g_name.replace('\n','') == i_group[1]+i_group[2]:
+                print(g_name)
+            else:
+                print('Not matching')
 
 
 def collect_info():

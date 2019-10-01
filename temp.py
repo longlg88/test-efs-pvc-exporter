@@ -220,4 +220,4 @@ if __name__ == "__main__":
     # print(json.dumps(all_json_info))
 
 # print('\nlaptime = ' % (timeit.default_timer() - start))
-print("\nlaptime = " % (time.time() - start))
+print("\nlaptime = %d" % (time.time() - start))

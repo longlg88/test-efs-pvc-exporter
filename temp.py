@@ -50,7 +50,7 @@ def test_collect_info():
     pv_list=get_pv_name()
     for g_name in pv_list:
         for i_group in info_list:
-            i_name=i_group[1]+i_group[2]
+            i_name=i_group[1]+'-'+i_group[2]
             if g_name.replace('\n','') == i_name:
                 print(g_name)
             else:

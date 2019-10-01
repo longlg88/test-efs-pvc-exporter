@@ -76,7 +76,7 @@ def match_collect_info():
     for pv_name in pv_list:
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]
-            pv_name=pv_name.decode('utf-8').replace('\n','')
+            pv_name=pv_name.replace('\n','')
 
             if pv_name == i_name:
                 # Calculate volume size

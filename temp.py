@@ -6,27 +6,44 @@ import subprocess
 import timeit
 import json
 from datetime import datetime
-import pytest
-
 
 def get_info():
-    """Return name, namespace, volumeName for PVC in kubernetes cluster
+    """Return namespace, pod name, volumeName for PVC in kubernetes cluster
     Args:
         None
     Returns:
         all info for list
-        [[name],[namespace],[pvc id]]
+        [['namespace', 'name', 'pvc id'], ...]
     """
-    
-    #info_pre = subprocess.check_output("kubectl get pvc --all-namespaces -o json | jq ' .items[].metadata.name, .items[].metadata.namespace, .items[].spec.volumeName'", shell=True)
-    info_pre_cmd = " kubectl get pvc --all-namespaces -o json | jq -r '.items[] | .metadata.namespace, .metadata.name, .spec.volumeName'"
-    info_pre = Popen(info_pre_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    info_pre_list = info_pre.stdout.read().split()
+
+    info_pvc_cmd = " kubectl get pvc --all-namespaces -o json | jq -r '.items[] | .metadata.namespace, .metadata.name, .spec.volumeName'"
+    info_pvc = Popen(info_pvc_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    info_pvc_list = info_pvc.stdout.read().split()
     count=3
-    info_pre_list = [info_pre_list [i:i+count] for i in range(0,len(info_pre_list),count)]
-    
-    
-    return info_pre_list
+    info_pvc_list = [ info_pvc_list[i:i+count] for i in range(0,len(info_pre_list),count) ]
+        
+    return info_pvc_list
+
+"""
+pvc 정보 가져 오기 --> [namespace, name, pvc_id]
+
+exec사용 --> persistentvolume 디렉토리에서 pv name가져오기 --> pv_name 
+
+if pv_name == name+pvc_id:
+   해당 pod의 pvc 내용이 있다
+   exec 사용 --> 있는 것 중에서 du로 계산
+else:
+    없다
+
+ 
+"""
+
+
+def test_collect_info():
+    info_list=get_info()
+    print(info_list)
+    return 0
+
 
 def collect_info():
 
@@ -105,6 +122,7 @@ if __name__ == "__main__":
     #start = timeit.default_timer() # Record processing time
 
     print(get_info())
+    test_collect_info()
 
     # json_info = collect_info()
 

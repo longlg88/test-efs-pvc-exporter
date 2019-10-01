@@ -174,7 +174,7 @@ def collect_info():
 if __name__ == "__main__":
     #start = timeit.default_timer() # Record processing time
 
-    test_collect_info()
+    match_collect_info()
 
     # json_info = collect_info()
 

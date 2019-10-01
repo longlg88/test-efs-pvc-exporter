@@ -76,7 +76,6 @@ def match_collect_info():
     for pv_name in pv_list:
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]
-            print(pv_name)
 
             if pv_name == i_name:
                 # Calculate volume size
@@ -108,7 +107,7 @@ def all_efs_collect_info():
     metric_list = []
 
     for pv_name in pv_list:
-        all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+pv_name.replace('\n','')+ " | awk '{print $1}'"
+        all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+pv_name+ " | awk '{print $1}'"
         all_size_res = Popen(all_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         all_size = all_size_res.stdout.readlines()[1:]
         all_sum_size = human_bytes(int(all_size[0].decode('utf-8').replace('\n',''))*1024)

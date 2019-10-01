@@ -91,7 +91,7 @@ def match_collect_info():
                 if find_pod_name and find_pod_name != "No resources found.":
                     metric_info = {"namespace":i_group[0], "name":find_pod_name, "size":str(sum_size), "pvc":pv_name}
                     metric_list.append(metric_info)
-    
+    print(metric_list)
     return metric_list
 
 def all_efs_collect_info():
@@ -114,6 +114,7 @@ def all_efs_collect_info():
         metric_info = {"pvc":pv_name, "size":str(all_sum_size)}
         metric_list.append(metric_info)
 
+    print(metric_list)
     return metric_list
 
 if __name__ == "__main__":

@@ -84,6 +84,8 @@ def match_collect_info():
 
     size_pvc=[]
     metric_list = []
+    datetime_now = datetime.now() # Define current time
+
     for pv_name in pv_list:
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]

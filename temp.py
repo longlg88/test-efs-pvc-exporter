@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 #-*- coding: utf-8 -*-
-
 import os
 import sys
 from subprocess import Popen, PIPE, STDOUT
@@ -60,13 +59,10 @@ def get_pv_name():
     pv_id_cmd = "kubectl exec -it "+get_efs_provisioner()+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
     pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     pv_id_list = pv_id_res.stdout.readlines()[1:]
-    pv_id = []
-    for x in pv_id_list:
-        x.decode('ascii')
-        pv_id.append(x)
-    print(pv_id)
+    pv_id_list
+    print(pv_id_list)
 
-    return pv_id
+    return pv_id_list
 
 def match_collect_info():
     """Return volume size matching pv id and efs directory's name which is exactly same.
@@ -80,13 +76,14 @@ def match_collect_info():
     for pv_name in pv_list:
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]
-            pv_name=pv_name.replace('\n','')
+            pv_name=pv_name.decode('utf-8').replace('\n','')
+
             if pv_name == i_name:
                 # Calculate volume size
-                m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv_name.replace('\n','') + " | awk '{print $1}'"
+                m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv_name + " | awk '{print $1}'"
                 m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 m_size = m_size_res.stdout.readlines()[1:]
-                sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)
+                sum_size = human_bytes(int(m_size[0].decode('utf-8').replace('\n',''))*1024)
                 size_pvc.append(sum_size)
 
                 # Find pod name for using claim name
@@ -114,7 +111,7 @@ def all_efs_collect_info():
         all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+pv_name.replace('\n','')+ " | awk '{print $1}'"
         all_size_res = Popen(all_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         all_size = all_size_res.stdout.readlines()[1:]
-        all_sum_size = human_bytes(int(all_size[0].replace('\n',''))*1024)
+        all_sum_size = human_bytes(int(all_size[0].decode('utf-8').replace('\n',''))*1024)
         size_pvc.append(all_sum_size)
 
         metric_info = {"pvc":pv_name, "size":str(all_sum_size)}

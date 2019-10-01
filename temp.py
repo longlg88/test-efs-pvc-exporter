@@ -75,7 +75,6 @@ def match_collect_info():
 
     size_pvc=[]
     metric_list = []
-    datetime_now = datetime.now() # Define current time
 
     for pv_name in pv_list:
         for i_group in info_list:
@@ -98,9 +97,9 @@ def match_collect_info():
                     metric_info = {"namespace":i_group[0], "name":find_pod_name, "size":str(sum_size), "pvc":pv_name}
                     metric_list.append(metric_info)
     
-    json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
-    #print(json_info)
-    return json_info    
+    #json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
+    #return json_info    
+    return metric_list
 
 def all_efs_collect_info():
     """Return all efs directory volumes size
@@ -111,7 +110,6 @@ def all_efs_collect_info():
 
     size_pvc = []
     metric_list = []
-    datetime_now = datetime.now()
 
     for pv_name in pv_list:
         all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+pv_name.replace('\n','')+ " | awk '{print $1}'"
@@ -123,21 +121,16 @@ def all_efs_collect_info():
         metric_info = {"pvc":pv_name, "size":str(all_sum_size)}
         metric_list.append(metric_info)
 
-    json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
-    # print(json_info)
-    return json_info
+    #json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
+    #return json_info
+    return metric_info
 
 if __name__ == "__main__":
+    datetime_now = datetime.now() # Define current time
     start = timeit.default_timer() # Record processing time
-    json_info = match_collect_info()
-    all_json_info = all_efs_collect_info()
-    #th_json_info=Thread(target=match_collect_info, args=())
-    #th_json_info.start()
-    #th_all_json_info=Thread(target=all_efs_collect_info, args=())
-    #th_all_json_info.start()
-
+    json_info = {"timestamp":str(datetime_now), "metadata":{"matching":match_collect_info(), "all":all_efs_collect_info()}}
     print(json.dumps(json_info))
-    print(json.dumps(all_json_info))
+
     stop = timeit.default_timer()
     laptime=stop-start
 

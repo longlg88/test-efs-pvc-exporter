@@ -57,7 +57,8 @@ def get_pv_name():
     
     pv_id_cmd = "kubectl exec -it "+get_efs_provisioner()+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
     pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    pv_id_list = pv_id_res.stdout.readlines()[1:].decode('utf-8')
+    pv_id_list = pv_id_res.stdout.readlines()[1:]
+    print(pv_id_list)
 
     return pv_id_list
 
@@ -78,7 +79,7 @@ def match_collect_info():
                 # Calculate volume size
                 m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv_name.replace('\n','') + " | awk '{print $1}'"
                 m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                m_size = m_size_res.stdout.readlines()[1:].decode('utf-8')
+                m_size = m_size_res.stdout.readlines()[1:]
                 sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)
                 size_pvc.append(sum_size)
 
@@ -106,7 +107,7 @@ def all_efs_collect_info():
     for pv_name in pv_list:
         all_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/"+pv_name.replace('\n','')+ " | awk '{print $1}'"
         all_size_res = Popen(all_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-        all_size = all_size_res.stdout.readlines()[1:].decode('utf-8')
+        all_size = all_size_res.stdout.readlines()[1:]
         all_sum_size = human_bytes(int(all_size[0].replace('\n',''))*1024)
         size_pvc.append(all_sum_size)
 

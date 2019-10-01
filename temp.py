@@ -43,7 +43,6 @@ def get_pvc_info():
     info_pvc_list = info_pvc.stdout.read().decode('utf-8').split()
     count=3
     info_pvc_list = [ info_pvc_list[i:i+count] for i in range(0,len(info_pvc_list),count) ]
-    print(info_pvc_list)
     return info_pvc_list
 
 def get_efs_provisioner():
@@ -73,7 +72,8 @@ def match_collect_info():
     for pv_name in pv_list:
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]
-
+            print(pv_name)
+            print(i_name)
             if pv_name == i_name:
                 # Calculate volume size
                 m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv_name.decode('utf-8').replace('\n','') + " | awk '{print $1}'"

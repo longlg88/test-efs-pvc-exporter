@@ -103,7 +103,7 @@ def match_collect_info():
                 find_pod_name_res = Popen(find_pod_name_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 find_pod_name = find_pod_name_res.stdout.read().replace('\n','')
                 
-                if find_pod_name:
+                if find_pod_name && find_pod_name != "No resources found.":
                     metric_info = {"namespace":i_group[0], "name":find_pod_name, "size":str(sum_size), "pvc":pv_name}
                     metric_list.append(metric_info)
     

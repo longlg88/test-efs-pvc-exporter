@@ -24,20 +24,6 @@ def get_info():
         
     return info_pvc_list
 
-"""
-pvc 정보 가져 오기 --> [namespace, name, pvc_id]
-
-exec사용 --> persistentvolume 디렉토리에서 pv name가져오기 --> pv_name 
-
-if pv_name == name+pvc_id:
-   해당 pod의 pvc 내용이 있다
-   exec 사용 --> 있는 것 중에서 du로 계산
-else:
-    없다
-
- 
-"""
-
 
 def test_collect_info():
     info_list=get_info()

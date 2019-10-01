@@ -91,7 +91,7 @@ def match_collect_info():
             i_name=i_group[1]+'-'+i_group[2]
             if pv_name.replace('\n','') == i_name:
                 # Calculate volume size
-                m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + g_name.replace('\n','') + " | awk '{print $1}'"
+                m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv_name.replace('\n','') + " | awk '{print $1}'"
                 m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 m_size = m_size_res.stdout.readlines()[1:]
                 sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)

@@ -72,9 +72,7 @@ def match_collect_info():
     for pv_name in pv_list:
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]
-            print(pv_name)
-            print(i_name)
-            if pv_name == i_name:
+            if pv_name.decode('utf-8').replace('\n','') == i_name:
                 # Calculate volume size
                 m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv_name.decode('utf-8').replace('\n','') + " | awk '{print $1}'"
                 m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)

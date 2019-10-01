@@ -8,15 +8,15 @@ import json
 from datetime import datetime
 
 def get_pvc_info():
-    """Return namespace, pod name, volumeName for PVC in kubernetes cluster
-    Args:
-        None
-    Returns:
-        all info for list
-        [['namespace', 'name', 'pvc id'], ...]
+    """Return namespace, pod name, volumeName for filtering PVC in kubernetes cluster
+    Filter condition
+        - Is it Bound?
+        - Is it StorageClass efs?
+        - 
     """
 
-    info_pvc_cmd = " kubectl get pvc --all-namespaces -o json | jq -r '.items[] | .metadata.namespace, .metadata.name, .spec.volumeName'"
+    info_pvc_cmd = "kubectl get pvc --all-namespaces -o json | jq -r '.items[] | select( ( .spec.storageClassName | contains(" + '"' + "efs" + '"' + ") ) and ( .status.phase | contains(" + '"' + "Bound" + '"' + ") ) )' | jq -r '.metadata.namespace, .metadata.name, .spec.volumeName'"
+    print(info_pvc_cmd)
     info_pvc = Popen(info_pvc_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     info_pvc_list = info_pvc.stdout.read().split()
     count=3
@@ -53,10 +53,6 @@ def test_collect_info():
             i_name=i_group[1]+'-'+i_group[2]
             if g_name.replace('\n','') == i_name:
                 print(g_name)
-            # else:
-            #     print(g_name)
-            #     print(i_name)
-            #     print('Not matching')
 
 
 def collect_info():

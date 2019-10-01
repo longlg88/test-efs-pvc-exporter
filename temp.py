@@ -7,7 +7,7 @@ import timeit
 import json
 from datetime import datetime
 
-def get_info():
+def get_pvc_info():
     """Return namespace, pod name, volumeName for PVC in kubernetes cluster
     Args:
         None
@@ -24,10 +24,34 @@ def get_info():
         
     return info_pvc_list
 
+def get_pv_name():
+    """Return pv name in kubernetes cluster
+    efs_provisioner_id = kubectl get pod -n kube-system | grep efs | awk '{print $1}'
+    
+    pv_id_cmd = kubectl exec -it [efs_provisioner_id] -nkube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'
+    pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    pv_id_list = pv_id_res.stdout.read().split()
+
+    pv_id_list = []
+    """
+    efs_provisioner_cmd = "kubectl get pod -n kube-system | grep efs | awk '{print $1}'"
+    efs_provisioner_res = Popen(efs_provisioner_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    efs_provisioner_id = efs_provisioner_res.stdout.read().replace('\n','')
+
+    pv_id_cmd = "kubectl exec -it "+efs_provisioner_id+ " -n kube-system -- ls -al /persistentvolumes | awk '{print $9}' | sed '1,3d'"
+    pv_id_res = Popen(pv_id_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    pv_id_list = pv_id_res.stdout.read().split()
+
+    return pv_id_list
+
 
 def test_collect_info():
     info_list=get_info()
-    print(info_list)
+    pv_list=get_pv_name()
+
+    print(pv_list)
+    #for i in info_list:
+
     return 0
 
 
@@ -107,7 +131,6 @@ def collect_info():
 if __name__ == "__main__":
     #start = timeit.default_timer() # Record processing time
 
-    print(get_info())
     test_collect_info()
 
     # json_info = collect_info()

@@ -46,13 +46,11 @@ def get_pv_name():
 
 
 def test_collect_info():
-    info_list=get_info()
+    info_list=get_pvc_info()
     pv_list=get_pv_name()
 
     print(pv_list)
     #for i in info_list:
-
-    return 0
 
 
 def collect_info():

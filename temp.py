@@ -53,10 +53,10 @@ def test_collect_info():
             i_name=i_group[1]+'-'+i_group[2]
             if g_name.replace('\n','') == i_name:
                 print(g_name)
-            else:
-                print(g_name)
-                print(i_name)
-                print('Not matching')
+            # else:
+            #     print(g_name)
+            #     print(i_name)
+            #     print('Not matching')
 
 
 def collect_info():

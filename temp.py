@@ -22,6 +22,8 @@ def get_info():
     info_pre_cmd = " kubectl get pvc --all-namespaces -o json | jq -r '.items[] | .metadata.namespace, .metadata.name, .spec.volumeName'"
     info_pre = Popen(info_pre_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     info_pre_list = info_pre.stdout.read().split()
+    count=3
+    info_pre_list = [info_pre_list [i:i+count] for i in range(0,len(info_pre_list),count)]
     
     
     return info_pre_list

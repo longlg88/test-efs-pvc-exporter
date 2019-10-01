@@ -105,7 +105,7 @@ def match_collect_info():
                 
                 print("name is = "+find_pod_name+"nn")
 
-                if find_pod_name == " ":
+                if find_pod_name != " ":
                     metric_info = {"namespace":i_group[0], "name":find_pod_name.replace('\n',''), "size":str(sum_size), "pvc":pv_name}
                     metric_list.append(metric_info)
     

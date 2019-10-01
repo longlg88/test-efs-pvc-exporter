@@ -30,11 +30,6 @@ def human_bytes(B):
     elif GB <= B < TB:
         return '{0:.2f} GB'.format(B/GB)
 
-# def get_pod_info():
-#     """Return pod name, claim name in kubernetes cluster for using get_pvc_info()
-#     kubectl get pv -A
-#     """
-
 def get_pvc_info():
     """Return namespace, pv name, volumeName for filtering PVC in kubernetes cluster
     Filter condition
@@ -97,8 +92,6 @@ def match_collect_info():
                     metric_info = {"namespace":i_group[0], "name":find_pod_name, "size":str(sum_size), "pvc":pv_name}
                     metric_list.append(metric_info)
     
-    #json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
-    #return json_info    
     return metric_list
 
 def all_efs_collect_info():
@@ -121,8 +114,6 @@ def all_efs_collect_info():
         metric_info = {"pvc":pv_name, "size":str(all_sum_size)}
         metric_list.append(metric_info)
 
-    #json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
-    #return json_info
     return metric_list
 
 if __name__ == "__main__":

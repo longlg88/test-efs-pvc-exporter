@@ -82,16 +82,25 @@ def match_collect_info():
         for i_group in info_list:
             i_name=i_group[1]+'-'+i_group[2]
             if g_name.replace('\n','') == i_name:
-                res_pv_list.append(g_name)
+                m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv.replace('\n','') + " | awk '{print $1}'"
+                m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                m_size = m_size_res.stdout.readlines()[1:]
+                sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)
+                size_pvc.append(sum_size)
 
-    for pv in res_pv_list:
-        m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv.replace('\n','') + " | awk '{print $1}'"
-        m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-        m_size = m_size_res.stdout.readlines()[1:]
-        print(m_size)
-        sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)
-        size_pvc.append(sum_size)
+    # for pv in res_pv_list:
+    #     m_size_cmd = "kubectl exec -it "+get_efs_provisioner()+" -n kube-system -- du -ks /persistentvolumes/" + pv.replace('\n','') + " | awk '{print $1}'"
+    #     m_size_res = Popen(m_size_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    #     m_size = m_size_res.stdout.readlines()[1:]
+    #     sum_size = human_bytes(int(m_size[0].replace('\n',''))*1024)
+    #     size_pvc.append(sum_size)
     print(size_pvc)
+
+    metric_info = {"namespace":i_group[val], "name":pod_name.replace('\n',''), "size":str(sum_size), "pvc":pvc_names[val]}
+    metric_list.append(dict(metric_info))
+
+    json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
+    return json_info
 
 def all_efs_collect_info():
     """Return all efs directory volumes size

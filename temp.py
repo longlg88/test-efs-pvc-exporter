@@ -123,7 +123,7 @@ def all_efs_collect_info():
 
     #json_info = {"timestamp":str(datetime_now),"metadata":{ "pod":metric_list } } # Before change json type
     #return json_info
-    return metric_info
+    return metric_list
 
 if __name__ == "__main__":
     datetime_now = datetime.now() # Define current time

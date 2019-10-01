@@ -24,7 +24,7 @@ def get_info():
     info_pre_list = info_pre.stdout.read().replace('"','').split()
     
     
-    assert info_pre_list
+    return info_pre_list
 
 def collect_info():
 
@@ -100,7 +100,7 @@ def collect_info():
         return json_info
 
 if __name__ == "__main__":
-    start = timeit.default_timer() # Record processing time
+    #start = timeit.default_timer() # Record processing time
 
     get_info()
 
